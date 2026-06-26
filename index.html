@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyZambia — Cultural Heritage & Experiences</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="main.css"/>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <!-- ── TOP BAR ── -->
+  <div id="topbar">
+    <div class="brand">
+      <span class="brand-name">MyZambia</span>
+      <span class="brand-sub">Cultural Heritage & Experiences</span>
+    </div>
+    <span class="badge">Beta · 10 Provinces</span>
+  </div>
+
+  <!-- ── FILTER BAR ── -->
+  <div id="filterbar">
+    <button class="filter-btn active" data-filter="all">All Experiences</button>
+    <button class="filter-btn" data-filter="ceremony">Ceremonies</button>
+    <button class="filter-btn" data-filter="heritage">Heritage Sites</button>
+    <button class="filter-btn" data-filter="nature">Nature & Wildlife</button>
+    <button class="filter-btn" data-filter="community">Community Stays</button>
+    <button class="filter-btn" data-filter="craft">Crafts & Arts</button>
+  </div>
+
+  <!-- ── SIDE PANEL ── -->
+  <div id="panel">
+    <div id="panel-header">
+      <canvas id="panel-canvas"></canvas>
+      <div id="panel-header-content">
+        <div id="panel-province"></div>
+        <div id="panel-title"></div>
+        <div id="panel-type"></div>
+      </div>
+      <button id="panel-close">✕</button>
+    </div>
+    <div id="panel-body">
+      <div class="panel-section">
+        <div class="panel-section-label">About</div>
+        <p id="panel-desc"></p>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-label">Details</div>
+        <div class="detail-grid" id="panel-details"></div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-label">Highlights</div>
+        <ul class="highlights-list" id="panel-highlights"></ul>
+      </div>
+      <div class="panel-section" id="cbt-section">
+        <div class="cbt-block">
+          <div class="cbt-label">Community Experience Available</div>
+          <p id="panel-cbt"></p>
+        </div>
+      </div>
+    </div>
+    <div id="panel-footer">
+      <button class="btn-primary">Enquire About This Experience</button>
+      <button class="btn-secondary">Share This Place</button>
+    </div>
+  </div>
+
+  <!-- ── LEGEND ── -->
+  <div id="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="color:#C87D3A; background:rgba(200,125,58,0.2)"></div>
+      Provinces
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="color:#C87D3A; background:rgba(200,125,58,0.15)"></div>
+      Experiences
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="color:#D4A843; background:rgba(212,168,67,0.15)"></div>
+      Ceremonies
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="color:#3E9E96; background:rgba(62,158,150,0.15)"></div>
+      Lodges
+    </div>
+  </div>
+
+  <!-- ── BASEMAP SWITCHER ── -->
+  <div id="basemap-switcher">
+    <button class="basemap-btn active" data-basemap="dark"
+            onclick="switchBasemap('dark')">
+      <span class="swatch"></span>Dark
+    </button>
+    <button class="basemap-btn" data-basemap="osm"
+            onclick="switchBasemap('osm')">
+      <span class="swatch"></span>OSM
+    </button>
+    <button class="basemap-btn" data-basemap="satellite"
+            onclick="switchBasemap('satellite')">
+      <span class="swatch"></span>Satellite
+    </button>
+  </div>
+
+  <!-- ── ZOOM CONTROLS ── -->
+  <div id="zoom-controls">
+    <button class="zoom-btn" id="zoom-in">+</button>
+    <button class="zoom-btn" id="zoom-out">−</button>
+  </div>
+
+  <!-- ── INTRO HINT ── -->
+  <div id="intro">
+    <p>Select a province or marker to explore</p>
+  </div>
+
+  <!-- ── SCRIPTS — order matters ── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="data/provinces.js"></script>
+  <script src="data/experiences.js"></script>
+  <script src="data/ceremonies.js"></script>
+  <script src="data/lodges.js"></script>
+  <script src="icons.js"></script>
+  <script src="textile.js"></script>
+  <script src="map.js"></script>
+  <script src="provinces-geo.js"></script>
+  <script src="layers.js"></script>
+  <script src="panel.js"></script>
+  <script src="filters.js"></script>
+  <script src="zoom.js"></script>
+  <script src="index.js"></script>
+
+</body>
+</html>

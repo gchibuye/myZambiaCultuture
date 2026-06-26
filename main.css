@@ -1,0 +1,370 @@
+/* ═══════════════════════════════════════════════
+   Discover Zambia — Cultural Heritage Map
+   main.css
+   ═══════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── DESIGN TOKENS ── */
+:root {
+  --ink:       #0E1A14;
+  --surface:   #132018;
+  --panel:     #0B1510;
+  --border:    rgba(255,255,255,0.07);
+  --sand:      #E8DCC8;
+  --sand-muted:#A89880;
+  --copper:    #C87D3A;
+  --gold:      #D4A843;
+  --teal:      #3E9E96;
+  --accent:    #C87D3A;
+  --tag-bg:    rgba(200,125,58,0.12);
+}
+
+
+html, body {
+  height: 100%;
+  background: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  color: var(--sand);
+}
+
+/* ── MAP ── */
+#map { position: absolute; inset: 0; z-index: 1; }
+/* tile-pane filter is applied dynamically by switchBasemap() in map.js */
+.leaflet-control-zoom { display: none; }
+.leaflet-attribution-flag { display: none !important; }
+.leaflet-control-attribution {
+  background: rgba(11,21,16,0.7) !important;
+  color: #5a6e60 !important;
+  font-size: 9px !important;
+}
+
+/* ── TOPBAR ── */
+#topbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 900;
+  height: 64px;
+  background: linear-gradient(to bottom, rgba(11,21,16,0.97) 70%, transparent);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  pointer-events: none;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; letter-spacing: 0.01em;
+  color: var(--sand);
+}
+.brand-sub {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--sand-muted);
+}
+.badge {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--copper);
+  border: 1px solid rgba(200,125,58,0.35);
+  border-radius: 20px; padding: 3px 10px;
+}
+
+/* ── FILTER BAR ── */
+#filterbar {
+  position: absolute; top: 54px; left: 0; right: 0; z-index: 900;
+  display: flex; gap: 8px; padding: 10px 24px;
+  background: linear-gradient(to bottom, rgba(11,21,16,0.92) 60%, transparent);
+  pointer-events: all;
+  overflow-x: auto;
+}
+#filterbar::-webkit-scrollbar { height: 0; }
+.filter-btn {
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--sand-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 14px;
+  cursor: pointer; transition: all 0.2s;
+}
+.filter-btn:hover { color: var(--sand); border-color: rgba(255,255,255,0.15); }
+.filter-btn.active {
+  color: var(--copper); border-color: rgba(200,125,58,0.5);
+  background: rgba(200,125,58,0.08);
+}
+
+/* ── SIDE PANEL ── */
+#panel {
+  position: absolute; top: 0; right: -420px; bottom: 0;
+  width: 400px; z-index: 1000;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+}
+#panel.open { right: 0; }
+
+#panel-header {
+  position: relative; height: 180px; flex-shrink: 0;
+  overflow: hidden;
+}
+#panel-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#panel-header-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 20px 24px;
+  background: linear-gradient(to top, rgba(11,21,16,0.92) 40%, rgba(11,21,16,0.2));
+}
+#panel-province {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--copper); margin-bottom: 4px;
+}
+#panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700; line-height: 1.15;
+  color: var(--sand);
+}
+#panel-type {
+  font-size: 11px; color: var(--sand-muted); margin-top: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+#panel-type span {
+  background: var(--tag-bg);
+  border: 1px solid rgba(200,125,58,0.2);
+  border-radius: 12px; padding: 2px 8px;
+  color: var(--copper); font-size: 10px; letter-spacing: 0.06em;
+}
+
+#panel-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(11,21,16,0.7); border: 1px solid var(--border);
+  color: var(--sand-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1; z-index: 10;
+  transition: all 0.2s;
+}
+#panel-close:hover { color: var(--sand); background: rgba(200,125,58,0.15); }
+
+#panel-body {
+  flex: 1; overflow-y: auto; padding: 24px;
+}
+#panel-body::-webkit-scrollbar { width: 4px; }
+#panel-body::-webkit-scrollbar-track { background: transparent; }
+#panel-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.panel-section { margin-bottom: 24px; }
+.panel-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--sand-muted);
+  margin-bottom: 8px;
+}
+#panel-desc {
+  font-size: 14px; line-height: 1.7; color: var(--sand);
+  opacity: 0.85;
+}
+
+.detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 4px;
+}
+.detail-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px;
+}
+.detail-item .di-label {
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--sand-muted); margin-bottom: 3px;
+}
+.detail-item .di-val {
+  font-size: 13px; font-weight: 500; color: var(--sand);
+}
+
+.highlights-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.highlights-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; line-height: 1.5; color: var(--sand); opacity: 0.85;
+}
+.highlights-list li::before {
+  content: '◈'; color: var(--copper); flex-shrink: 0;
+  font-size: 10px; margin-top: 3px;
+}
+
+.cbt-block {
+  background: rgba(62,158,150,0.06);
+  border: 1px solid rgba(62,158,150,0.2);
+  border-radius: 10px; padding: 14px 16px;
+}
+.cbt-block .cbt-label {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 6px;
+}
+.cbt-block p { font-size: 13px; line-height: 1.6; color: var(--sand); opacity: 0.8; }
+
+#panel-footer {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.btn-primary {
+  width: 100%; padding: 12px;
+  background: var(--copper); border: none; border-radius: 8px;
+  color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+  cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: #d98840; }
+.btn-secondary {
+  width: 100%; padding: 11px;
+  background: transparent;
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--sand-muted); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--sand); }
+
+/* ── LEGEND / STATS ── */
+#stats {
+  position: absolute; bottom: 24px; left: 24px; z-index: 800;
+  background: rgba(11,21,16,0.88);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px;
+  display: flex; gap: 20px;
+  backdrop-filter: blur(8px);
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--copper);
+  line-height: 1;
+}
+.stat-label { font-size: 10px; color: var(--sand-muted); letter-spacing: 0.08em; margin-top: 2px; }
+
+/* ── CUSTOM MARKERS ── */
+.province-marker {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: rgba(11,21,16,0.85);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.province-marker svg { width: 14px; height: 14px; }
+
+.province-marker:hover, .province-marker.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px rgba(200,125,58,0.2);
+}
+
+/* ── ZOOM CONTROLS ── */
+#zoom-controls {
+  position: absolute; bottom: 24px; right: 24px; z-index: 800;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.zoom-btn {
+  width: 34px; height: 34px;
+  background: rgba(11,21,16,0.88);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--sand-muted);
+  font-size: 18px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.zoom-btn:hover { color: var(--sand); border-color: rgba(255,255,255,0.2); }
+
+/* ── INTRO TOOLTIP ── */
+#intro {
+  position: absolute; top: 50%; left: 50%; z-index: 700;
+  transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none;
+  transition: opacity 0.5s;
+}
+#intro p {
+  font-size: 12px; color: var(--sand-muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+#intro.hidden { opacity: 0; }
+
+/* ── BASEMAP LAYER SWITCHER ── */
+#basemap-switcher {
+  position: absolute; bottom: 104px; right: 24px; z-index: 800;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.basemap-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  background: rgba(11,21,16,0.88);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--sand-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+.basemap-btn:hover { color: var(--sand); border-color: rgba(255,255,255,0.2); }
+.basemap-btn.active {
+  color: var(--copper);
+  border-color: rgba(200,125,58,0.5);
+  background: rgba(200,125,58,0.08);
+}
+.basemap-btn .swatch {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);
+}
+.basemap-btn[data-basemap="dark"]      .swatch { background: #1a2820; }
+.basemap-btn[data-basemap="osm"]       .swatch { background: #a8d0a0; }
+.basemap-btn[data-basemap="satellite"] .swatch { background: #4a6840; }
+
+/* ── LAYER MARKERS (experiences, ceremonies, lodges) ── */
+.layer-marker {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid currentColor;
+  background: rgba(11,21,16,0.88);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.layer-marker svg { width: 11px; height: 11px; }
+
+.layer-marker:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+}
+
+/* Rounded for experiences, star shape marker for ceremonies, house for lodges */
+.layer-marker--experiences { border-radius: 50%; }
+.layer-marker--ceremonies  { border-radius: 4px; transform: rotate(45deg); }
+.layer-marker--lodges      { border-radius: 4px 4px 0 0; }
+
+/* ── LEGEND ── */
+#legend {
+  position: absolute; bottom: 24px; left: 24px; z-index: 800;
+  background: rgba(11,21,16,0.88);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  backdrop-filter: blur(8px);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--sand-muted);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; border: 1.5px solid currentColor;
+}
+
+/* ── HIDDEN GEMS LIST ── */
+/* Diamond bullet replaced with a gem marker */
+.highlights-list--gems li::before {
+  content: '◆';
+  color: var(--gold);
+}
