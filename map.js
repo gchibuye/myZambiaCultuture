@@ -13,14 +13,14 @@ let basemaps       = {};     // populated inside initMap once L is ready
 function initMap() {
   // Zambia bounding box with padding so borders aren't flush to the edge
   const zambiaBounds = L.latLngBounds(
-    L.latLng(-18.6, 21.3),   // SW corner
-    L.latLng(-5.0,  34.2)    // NE corner
+    L.latLng(-18.9, 20.5),   // SW corner
+    L.latLng(-5.0,  35)    // NE corner
   );
 
   map = L.map('map', {
     center: [-13.5, 27.5],
     zoom: 6,
-    minZoom: 6,              // stops zoom-out once full Zambia is visible
+    minZoom: 5,              // stops zoom-out once full Zambia is visible
     maxZoom: 18,
     zoomControl: false,
     attributionControl: true,
